@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
-import axios,{ AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
+import axios,{ AxiosInstance, AxiosRequestConfig, AxiosResponse, CreateAxiosDefaults, InternalAxiosRequestConfig} from 'axios';
 
 export interface CustomAxiosRequestConfig {
     enableLogging?: boolean;
@@ -10,10 +10,11 @@ export class HttpAsyncService {
     private axiosInstance: AxiosInstance;
     private readonly logger = new Logger(HttpAsyncService.name);
 
-    constructor(private readonly options: CustomAxiosRequestConfig) {
-        this.axiosInstance = axios.create();
+    constructor(private readonly options: CustomAxiosRequestConfig & CreateAxiosDefaults) {
+        const { enableLogging, ...config } = this.options;
+        this.axiosInstance = axios.create(config);
 
-        if(options.enableLogging) {
+        if(enableLogging) {
             this.axiosInstance.interceptors.request.use(this.handleRequest);
         }
     }
