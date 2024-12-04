@@ -21,11 +21,11 @@ export class HttpAsyncModule {
     static forFeature(options: {serviceName: string, config: CustomAxiosRequestConfig} | {serviceName: string, config: CustomAxiosRequestConfig}[]): DynamicModule {
         if (Array.isArray(options)) {
             return options.reduce<DynamicModule>((acc, option) => {
-                const httpServeice = new HttpAsyncService(option.config);
+                const httpService = new HttpAsyncService(option.config);
                 const providerName = option.serviceName;
                 acc.providers?.push({
                     provide: providerName,
-                    useValue: httpServeice
+                    useValue: httpService
                 });
                 acc.exports?.push(providerName);
                 return acc;
