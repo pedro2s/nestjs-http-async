@@ -1,4 +1,11 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { AppService } from './app.service';
 
 @Controller()
@@ -10,8 +17,13 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @Get('todos')
-  fethcData() {
-    return this.appService.fethcData();
+  @Get('todos/:id')
+  fethcData(@Param('id', ParseIntPipe) id: number) {
+    return this.appService.fethcData(id);
+  }
+
+  @Post('todos')
+  post(@Body() data: any) {
+    return this.appService.post(data);
   }
 }

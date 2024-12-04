@@ -9,6 +9,7 @@ import { HttpAsyncModule } from '@pedro2s/nestjs-http-async';
       serviceName: 'CustomHttpService',
       config: {
         enableLogging: true,
+        baseURL: 'https://jsonplaceholder.typicode.com',
       },
     }),
   ],

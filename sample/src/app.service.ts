@@ -11,11 +11,15 @@ export class AppService {
     return 'Hello World!';
   }
 
-  async fethcData() {
-    const resonse = await this.httpService.get(
-      'https://jsonplaceholder.typicode.com/todos/1',
-    );
+  async fethcData(id: number) {
+    const resonse = await this.httpService.get(`/todos/${id}`);
 
     return resonse.data;
+  }
+
+  async post(data: any) {
+    const response = await this.httpService.post('/todos', data);
+
+    return response.data;
   }
 }

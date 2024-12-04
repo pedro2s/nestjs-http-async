@@ -23,11 +23,28 @@ describe('AppController (e2e)', () => {
   });
 
   it('/todos (GET)', () => {
-    return request(app.getHttpServer()).get('/todos').expect(200).expect({
+    return request(app.getHttpServer()).get('/todos/1').expect(200).expect({
       userId: 1,
       id: 1,
       title: 'delectus aut autem',
       completed: false,
     });
+  });
+
+  it('/todos (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/todos')
+      .send({
+        userId: 1,
+        title: 'delectus aut autem',
+        completed: false,
+      })
+      .expect(201)
+      .expect({
+        userId: 1,
+        id: 201,
+        title: 'delectus aut autem',
+        completed: false,
+      });
   });
 });
