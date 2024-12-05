@@ -1,6 +1,6 @@
 {
   "name": "@pedro2s/nestjs-http-async",
-  "version": "0.1.2",
+  "version": "1.0.0",
   "description": "HttpService Async for NestJS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -46,5 +46,12 @@
     "fbjs-scripts": "^3.0.1",
     "rimraf": "^6.0.1",
     "typescript": "^5.7.2"
-  }
+  },
+  "keywords": [
+    "NestJS",
+    "HttpModule",
+    "Axios",
+    "HttpService",
+    "Async"
+  ]
 }
