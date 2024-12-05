@@ -97,11 +97,11 @@ import { HttpAsyncModule } from 'nestjs-http-async';
 
 @Module({
   imports: [
-    HttpAsyncModule.forRoot({
+    HttpAsyncModule.forFeature({
       serviceName: 'CustomHttpService',
       config: {
         enableLogging: true,
-        baseURL: 'https://jsonplaceholder.typicode.com',
+        baseURL: 'https://api.example.com',
         // Other Axios configuration options
       },
     }),
@@ -109,6 +109,56 @@ import { HttpAsyncModule } from 'nestjs-http-async';
   // ...
 })
 export class AppModule {}
+```
+or
+```typescript
+import { Module } from '@nestjs/common';
+import { HttpAsyncModule } from 'nestjs-http-async';
+
+@Module({
+  imports: [
+    HttpAsyncModule.forFeature([
+      {
+        serviceName: 'JsonPlaceholder',
+        config: {
+           enableLogging: true,
+           baseURL: 'https://jsonplaceholder.typicode.com',
+           // Other Axios configuration options
+        },
+      },
+      {
+        serviceName: 'AdviceSlip',
+        baseURL: 'https://api.adviceslip.com/advice'
+        // ...
+      }
+    ]),
+  ],
+  // ...
+})
+export class AppModule {}
+```
+If your `HttpAsyncModule` configuration is via the `forFeature` method
+inject `HttpAsyncService` into your service or controller like this::
+
+```typescript
+import { Injectable } from '@nestjs/common';
+import { HttpAsyncService } from 'nestjs-http-async';
+
+@Injectable()
+export class MyService {
+  constructor(
+    @Inject('CustomHttpService')
+    private readonly httpAsyncService: HttpAsyncService) {}
+
+  async fetchData() {
+    try {
+      const response = await this.httpAsyncService.get('/data');
+      return response.data;
+    } catch (error) {
+      // Handle error
+    }
+  }
+}
 ```
 
 ## Differences from NestJS HttpService
