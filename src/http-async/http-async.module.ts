@@ -3,8 +3,8 @@ import { CustomAxiosRequestConfig, HttpAsyncService } from "./http-async.service
 
 @Module({})
 export class HttpAsyncModule {
-    private static getDynamicHttpAsyncModule(options: {serviceName: string, config: CustomAxiosRequestConfig}): DynamicModule {
-        const httpServeice = new HttpAsyncService(options.config);
+    private static getDynamicHttpAsyncModule(options: {serviceName: string, config?: CustomAxiosRequestConfig}): DynamicModule {
+        const httpServeice = new HttpAsyncService(options?.config ?? {});
         const providerName = options.serviceName;
         return {
             module: HttpAsyncModule,
@@ -18,10 +18,10 @@ export class HttpAsyncModule {
         }
     }
 
-    static forFeature(options: {serviceName: string, config: CustomAxiosRequestConfig} | {serviceName: string, config: CustomAxiosRequestConfig}[]): DynamicModule {
+    static forFeature(options: {serviceName: string, config?: CustomAxiosRequestConfig} | {serviceName: string, config: CustomAxiosRequestConfig}[]): DynamicModule {
         if (Array.isArray(options)) {
             return options.reduce<DynamicModule>((acc, option) => {
-                const httpService = new HttpAsyncService(option.config);
+                const httpService = new HttpAsyncService(option?.config ?? {});
                 const providerName = option.serviceName;
                 acc.providers?.push({
                     provide: providerName,
@@ -39,8 +39,8 @@ export class HttpAsyncModule {
         }
     }
 
-    static forRoot(options: CustomAxiosRequestConfig): DynamicModule {
-        const httpServeice = new HttpAsyncService(options);
+    static forRoot(options?: CustomAxiosRequestConfig): DynamicModule {
+        const httpServeice = new HttpAsyncService(options ?? {});
 
         return {
             module: HttpAsyncModule,
