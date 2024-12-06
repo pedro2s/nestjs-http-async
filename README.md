@@ -128,8 +128,10 @@ import { HttpAsyncModule } from 'nestjs-http-async';
       },
       {
         serviceName: 'AdviceSlip',
-        baseURL: 'https://api.adviceslip.com/advice'
-        // ...
+        config: {
+          baseURL: 'https://api.adviceslip.com/advice'
+        // Other Axios configuration options
+        }
       }
     ]),
   ],
