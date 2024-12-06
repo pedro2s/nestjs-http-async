@@ -121,16 +121,16 @@ import { HttpAsyncModule } from 'nestjs-http-async';
       {
         serviceName: 'JsonPlaceholder',
         config: {
-           enableLogging: true,
-           baseURL: 'https://jsonplaceholder.typicode.com',
-           // Other Axios configuration options
+          enableLogging: true,
+          baseURL: 'https://jsonplaceholder.typicode.com',
+          // Other Axios configuration options
         },
       },
       {
         serviceName: 'AdviceSlip',
         config: {
           baseURL: 'https://api.adviceslip.com/advice'
-        // Other Axios configuration options
+          // Other Axios configuration options
         }
       }
     ]),
