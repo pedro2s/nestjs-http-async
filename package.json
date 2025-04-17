@@ -1,6 +1,6 @@
 {
   "name": "@pedro2s/nestjs-http-async",
-  "version": "v1.0.3",
+  "version": "v1.0.4",
   "description": "HttpService Async for NestJS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
