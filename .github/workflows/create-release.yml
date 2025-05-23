@@ -1,27 +1,52 @@
-on:
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
-
 name: Create Release
+on:
+    push:
+        # Sequence of patterns matched against refs/tags
+        tags:
+            - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
-  build:
-    name: Create Release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Create Release
-        id: create_release
-        uses: comnoco/create-release-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            ${{ github.event.head_commit.message }}
-          draft: false
-          prerelease: false
+    build:
+        name: Create Release
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0 # Fetch all history for all branches and tags
+
+            - name: Get latest tag
+              id: get_tag
+              shell: bash
+              run: |
+                  LATEST_TAG=$(git tag --list 'v*' --sort=-v:refname | head -n 1)
+                  echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+            - name: Generate changelog
+              id: changelog
+              run: |
+                  LATEST_TAG="${{ steps.get_tag.outputs.latest_tag }}"
+                  if [[ -z "$LATEST_TAG" ]]; then
+                    LOG=$(git log --pretty=format:"- %s (%h)" )
+                  else
+                    LOG=$(git log "${LATEST_TAG}..HEAD" --pretty=format:"- %s (%h)")
+                  fi
+                  echo "changelog<<EOF" >> $GITHUB_OUTPUT
+                  echo "$LOG" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+
+            - name: Create Release
+              id: create_release
+              uses: comnoco/create-release-action@v2
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+              with:
+                  tag_name: ${{ github.ref }}
+                  release_name: Release ${{ github.ref }}
+                  body: |
+                      ${{ github.event.head_commit.message }}
+
+                      ### Changelog
+                      ${{ steps.changelog.outputs.changelog }}
+                  draft: false
+                  prerelease: false
