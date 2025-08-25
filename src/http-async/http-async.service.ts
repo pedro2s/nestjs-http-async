@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 import axios, {
 	AxiosError,
 	AxiosInstance,
@@ -6,7 +6,7 @@ import axios, {
 	AxiosResponse,
 	CreateAxiosDefaults,
 	InternalAxiosRequestConfig,
-} from 'axios';
+} from "axios";
 
 export interface CustomAxiosRequestConfig extends CreateAxiosDefaults {
 	enableLogging?: boolean;
@@ -14,7 +14,7 @@ export interface CustomAxiosRequestConfig extends CreateAxiosDefaults {
 
 @Injectable()
 export class HttpAsyncService {
-	private axiosInstance: AxiosInstance;
+	public readonly axiosInstance: AxiosInstance;
 
 	constructor(private readonly config: CustomAxiosRequestConfig) {
 		const { enableLogging, ...axiosConfig } = this.config;
@@ -22,18 +22,29 @@ export class HttpAsyncService {
 
 		if (enableLogging) {
 			this.axiosInstance.interceptors.request.use(this.handleRequest);
-			this.axiosInstance.interceptors.response.use(this.handleResponse, this.handleErrorResponse);
+			this.axiosInstance.interceptors.response.use(
+				this.handleResponse,
+				this.handleErrorResponse
+			);
 		}
 	}
 
-	private handleRequest(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
-		console.log(`HTTP Request: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
+	private handleRequest(
+		config: InternalAxiosRequestConfig
+	): InternalAxiosRequestConfig {
+		console.log(
+			`HTTP Request: ${config.method?.toUpperCase()} ${config.baseURL}${
+				config.url
+			}`
+		);
 		return config;
 	}
 
 	private handleResponse(response: AxiosResponse): AxiosResponse {
 		console.log(
-			`HTTP Response: ${response.status} ${response.config.method?.toUpperCase()} ${response.config.baseURL}${
+			`HTTP Response: ${
+				response.status
+			} ${response.config.method?.toUpperCase()} ${response.config.baseURL}${
 				response.config.url
 			}`
 		);
@@ -49,31 +60,55 @@ export class HttpAsyncService {
 		return this.axiosInstance.request<T>(config);
 	}
 
-	async get<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+	async get<T>(
+		url: string,
+		config?: AxiosRequestConfig
+	): Promise<AxiosResponse<T>> {
 		return this.axiosInstance.get<T>(url, config);
 	}
 
-	async post<T>(url: string, data: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+	async post<T>(
+		url: string,
+		data: any,
+		config?: AxiosRequestConfig
+	): Promise<AxiosResponse<T>> {
 		return this.axiosInstance.post<T>(url, data, config);
 	}
 
-	async put<T>(url: string, data: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+	async put<T>(
+		url: string,
+		data: any,
+		config?: AxiosRequestConfig
+	): Promise<AxiosResponse<T>> {
 		return this.axiosInstance.put<T>(url, data, config);
 	}
 
-	async patch<T>(url: string, data: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+	async patch<T>(
+		url: string,
+		data: any,
+		config?: AxiosRequestConfig
+	): Promise<AxiosResponse<T>> {
 		return this.axiosInstance.patch<T>(url, data, config);
 	}
 
-	async delete<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+	async delete<T>(
+		url: string,
+		config?: AxiosRequestConfig
+	): Promise<AxiosResponse<T>> {
 		return this.axiosInstance.delete<T>(url, config);
 	}
 
-	async head<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+	async head<T>(
+		url: string,
+		config?: AxiosRequestConfig
+	): Promise<AxiosResponse<T>> {
 		return this.axiosInstance.head<T>(url, config);
 	}
 
-	async options<T>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+	async options<T>(
+		url: string,
+		config?: AxiosRequestConfig
+	): Promise<AxiosResponse<T>> {
 		return this.axiosInstance.options<T>(url, config);
 	}
 }
