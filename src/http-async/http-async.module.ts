@@ -1,5 +1,18 @@
-import { DynamicModule, Module } from "@nestjs/common";
+import { DynamicModule, Module, Provider } from "@nestjs/common";
 import { CustomAxiosRequestConfig, HttpAsyncService } from "./http-async.service";
+
+export interface HttpAsyncModuleOptionsAsync {
+    imports?: any[];
+    useFactory: (...args: any[]) => Promise<CustomAxiosRequestConfig> | CustomAxiosRequestConfig;
+    inject?: any[];
+}
+
+export interface HttpAsyncForFeatureOptionsAsync {
+    serviceName: string;
+    imports?: any[];
+    useFactory: (...args: any[]) => Promise<CustomAxiosRequestConfig> | CustomAxiosRequestConfig;
+    inject?: any[];
+}
 
 @Module({})
 export class HttpAsyncModule {
@@ -51,6 +64,74 @@ export class HttpAsyncModule {
                 }
             ],
             exports: [HttpAsyncService]
+        }
+    }
+
+    static forRootAsync(options: HttpAsyncModuleOptionsAsync): DynamicModule {
+        const providers: Provider[] = [
+            {
+                provide: HttpAsyncService,
+                useFactory: async (...args) => {
+                    const config = await options.useFactory(...args);
+                    return new HttpAsyncService(config);
+                },
+                inject: options.inject || [],
+            },
+        ];
+
+        return {
+            module: HttpAsyncModule,
+            imports: options.imports || [],
+            providers,
+            exports: [HttpAsyncService],
+        };
+    }
+
+    static forFeatureAsync(options: HttpAsyncForFeatureOptionsAsync | HttpAsyncForFeatureOptionsAsync[]): DynamicModule {
+        if (Array.isArray(options)) {
+            const providers: Provider[] = options.map(option => ({
+                provide: option.serviceName,
+                useFactory: async (...args) => {
+                    const config = await option.useFactory(...args);
+                    return new HttpAsyncService(config);
+                },
+                inject: option.inject || [],
+            }));
+
+            const imports = options.reduce<any[]>((acc, option) => {
+                if (option.imports) {
+                    acc.push(...option.imports);
+                }
+                return acc;
+            }, []);
+
+            const uniqueImports = [...new Set(imports)];
+
+
+            return {
+                module: HttpAsyncModule,
+                imports: uniqueImports,
+                providers,
+                exports: options.map(o => o.serviceName),
+            };
+        } else {
+            const providers: Provider[] = [
+                {
+                    provide: options.serviceName,
+                    useFactory: async (...args) => {
+                        const config = await options.useFactory(...args);
+                        return new HttpAsyncService(config);
+                    },
+                    inject: options.inject || [],
+                },
+            ];
+
+            return {
+                module: HttpAsyncModule,
+                imports: options.imports || [],
+                providers,
+                exports: [options.serviceName],
+            };
         }
     }
 }
