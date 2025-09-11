@@ -1,0 +1,4 @@
+# Arquivos que não devem ir para o NPM
+node_modules
+sample
+coverage
